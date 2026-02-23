@@ -1,8 +1,8 @@
 # Go Starter
 
-A hands-on introduction to Go for beginners. Eight progressive exercises that
-build on each other — all using Go's standard library (plus Docker for one
-exercise).
+A hands-on introduction to Go for beginners. Ten progressive exercises that
+build on each other — all using Go's standard library (plus Docker and Docker
+Compose for three exercises).
 
 ## Prerequisites
 
@@ -65,11 +65,14 @@ Work through these in order. Each has its own `README.md` with instructions.
 | 6 | [06-file-io](./06-file-io/) | Reading and writing files, filtering text |
 | 7 | [07-rest-post](./07-rest-post/) | POST requests, request bodies, JSON encoding |
 | 8 | [08-link-shortener](./08-link-shortener/) | Capstone: maps, mutexes, persistence, redirects |
+| 9 | [09-docker-compose](./09-docker-compose/) | Docker Compose, replicas, Nginx load balancing |
+| 10 | [10-compose-link-shortener](./10-compose-link-shortener/) | Capstone: Redis, third-party packages, Docker Compose |
 
 ## Tips
 
-- **Read the test first.** Each exercise has a `main_test.go` that shows exactly
-  what your code needs to do. Write code until the tests pass.
+- **Read the test first.** Exercises 01–08 each have a `main_test.go` that shows
+  exactly what your code needs to do. Exercises 05, 09, and 10 use shell scripts
+  for testing instead (Docker exercises don't fit Go's test framework).
 - **Use `go test -v`** in an exercise directory to see detailed output.
 - **Test POST endpoints with curl.** For exercises with POST routes, use
   `curl -X POST -H "Content-Type: application/json" -d '{"key":"value"}' URL`.

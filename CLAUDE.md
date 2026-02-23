@@ -2,8 +2,9 @@
 
 ## Project Overview
 
-Go learning repository for a work experience student. Eight progressive exercises
-using **only the Go standard library** (plus Docker for one exercise).
+Go learning repository for a work experience student. Ten progressive exercises
+using **only the Go standard library** (plus Docker and Docker Compose for three
+exercises, and `go-redis` for the capstone).
 
 ## Module
 
@@ -21,6 +22,8 @@ using **only the Go standard library** (plus Docker for one exercise).
 | 6 | `06-file-io`           | `os.Open`, `bufio.Scanner`, `os.Create`, `strings.Contains` | Ready   |
 | 7 | `07-rest-post`         | POST, `json.NewDecoder/Encoder`, `http.NewServeMux` patterns | Ready   |
 | 8 | `08-link-shortener`    | Maps, `sync.Mutex`, persistence, redirects, path params | Ready   |
+| 9 | `09-docker-compose`    | Docker Compose, replicas, Nginx, `os.Hostname()` | Ready   |
+| 10 | `10-compose-link-shortener` | Redis, `go-redis`, Docker Compose, `INCR`/`HSET`/`HGET` | Ready   |
 
 ## How to Run Tests
 
@@ -38,17 +41,22 @@ go test ./...
 - [ ] Task 06 — File I/O completed
 - [ ] Task 07 — REST API with POST completed
 - [ ] Task 08 — Capstone Link Shortener completed
+- [ ] Task 09 — Docker Compose completed
+- [ ] Task 10 — Capstone Link Shortener with Redis completed
 
 ## Memory
 
 Key decisions and context for this project:
 
-- Standard library only — no third-party packages.
-- Tests are the source of truth; each exercise has a `main_test.go`.
+- Standard library only — no third-party packages (exception: Task 10 uses `go-redis`).
+- Tests are the source of truth; exercises 01–08 each have a `main_test.go`.
+  Exercises 05, 09, 10 use shell scripts for testing (Docker exercises).
 - The mock server from Task 02 is reused in Task 03's tests to validate the client.
 - Task 06 teaches file I/O — the fundamental gap before building the capstone.
 - Task 07 introduces POST, stream-based JSON, and ServeMux method patterns.
 - Task 08 is the capstone — combines maps, mutexes, file persistence, handlers, and redirects.
+- Task 09 introduces Docker Compose with replicas and Nginx load balancing.
+- Task 10 is the final capstone — combines Redis, Docker Compose, HTTP handlers, and redirects.
 
 ## Lessons Learned
 
@@ -70,4 +78,14 @@ future regressions.
 - Task 08 has 5 tests (shorten, redirect, not-found, empty URL, persistence) — total now 20.
 - Task 08's redirect test uses `http.Client{CheckRedirect: ...}` to prevent following the redirect.
 - Task 08's `LoadFromFile` sets `next = len(links)` so new keys don't collide with loaded ones.
+- 20 Go tests (1+1+2+3+4+4+5) across exercises 01–08, plus 3 shell-script-tested exercises (05, 09, 10).
+- Task 09 uses Docker Compose with 3 replicas + Nginx; test script verifies multiple hostnames appear.
+- Task 09's server uses `os.Hostname()` — inside containers, this returns the container ID.
+- Task 09 uses `expose` (internal only) for web replicas and `ports` (host-mapped) for Nginx.
+- Docker DNS resolves the service name `web` to all replica IPs for Nginx upstream round-robin.
+- Task 10 uses `go-redis` (`github.com/redis/go-redis/v9`) — the first third-party dependency.
+- Task 10's `INCR "link:next"` starts at 1 (not 0 like the old counter) — keys are "1", "2", "3".
+- Task 10 needs no mutex — Redis handles concurrency atomically.
+- Task 10's persistence test restarts only the app container (not Redis) to verify data survives.
+- Task 10's Dockerfile copies `go.mod`+`go.sum` before code for dependency layer caching.
 - `json.NewEncoder(w).Encode()` adds a trailing `\n` — tests use `json.NewDecoder` which handles this.
