@@ -43,11 +43,11 @@ REDIRECT_RESPONSE=$(curl -s -o /dev/null -w "%{http_code} %{redirect_url}" http:
 REDIRECT_STATUS=$(echo "$REDIRECT_RESPONSE" | awk '{print $1}')
 REDIRECT_URL=$(echo "$REDIRECT_RESPONSE" | awk '{print $2}')
 
-if [ "$REDIRECT_STATUS" = "302" ] && [ "$REDIRECT_URL" = "https://go.dev" ]; then
-    echo "PASS: got 302 redirecting to https://go.dev"
+if [ "$REDIRECT_STATUS" = "302" ] && [ "$REDIRECT_URL" = "https://go.dev/" ]; then
+    echo "PASS: got 302 redirecting to https://go.dev/"
     PASSED=$((PASSED + 1))
 else
-    echo "FAIL: expected 302 → https://go.dev, got status=$REDIRECT_STATUS url=$REDIRECT_URL"
+    echo "FAIL: expected 302 → https://go.dev/, got status=$REDIRECT_STATUS url=$REDIRECT_URL"
     FAILED=$((FAILED + 1))
 fi
 
@@ -86,11 +86,11 @@ PERSIST_RESPONSE=$(curl -s -o /dev/null -w "%{http_code} %{redirect_url}" http:/
 PERSIST_STATUS=$(echo "$PERSIST_RESPONSE" | awk '{print $1}')
 PERSIST_URL=$(echo "$PERSIST_RESPONSE" | awk '{print $2}')
 
-if [ "$PERSIST_STATUS" = "302" ] && [ "$PERSIST_URL" = "https://go.dev" ]; then
+if [ "$PERSIST_STATUS" = "302" ] && [ "$PERSIST_URL" = "https://go.dev/" ]; then
     echo "PASS: data survived app restart (Redis persistence)"
     PASSED=$((PASSED + 1))
 else
-    echo "FAIL: expected 302 → https://go.dev after restart, got status=$PERSIST_STATUS url=$PERSIST_URL"
+    echo "FAIL: expected 302 → https://go.dev/ after restart, got status=$PERSIST_STATUS url=$PERSIST_URL"
     FAILED=$((FAILED + 1))
 fi
 
