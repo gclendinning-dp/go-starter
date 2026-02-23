@@ -8,6 +8,8 @@
 - How to combine Docker Compose, HTTP handlers, and external services
 - What `context.Context` is (briefly)
 - Redis commands: `INCR`, `HSET`, `HGET`
+- **Replicas** and **Nginx load balancing** (building on Task 09)
+- Using `os.Hostname()` to identify which container handles a request
 
 ## Key Concepts
 
@@ -103,9 +105,20 @@ mutex to handle persistence and concurrency. That works, but has limitations:
 
 ### Docker Compose for Multiple Services
 
-Building on Task 09, this exercise uses Docker Compose to run **two services**:
-Redis and your Go application. The `depends_on` key ensures Redis starts first,
-and Docker DNS lets your app connect to Redis using the hostname `redis`.
+Building on Task 09, this exercise uses Docker Compose to run **three services**:
+Redis, your Go application (with 3 replicas), and Nginx as a load balancer.
+The `depends_on` key ensures Redis starts before the app, and the app starts
+before Nginx. Docker DNS lets your app connect to Redis using the hostname
+`redis`, and Nginx uses the service name `app` to discover all replicas.
+
+### Replicas and Load Balancing
+
+This is the same pattern from Task 09, now applied to a real application.
+Running 3 replicas of the app means three identical containers handle requests.
+Nginx sits in front and distributes traffic across all replicas using
+round-robin. Each container has a unique hostname (its container ID), which you
+can expose via `os.Hostname()` to prove that different containers are handling
+different requests.
 
 ## Instructions
 
@@ -151,20 +164,25 @@ and Docker DNS lets your app connect to Redis using the hostname `redis`.
    - Decode the request body
    - If the URL is empty, return 400
    - Call `Shorten` — if it returns an error, return 500
-   - Respond with status `201` and the key + short URL
+   - Use `os.Hostname()` to get the container's hostname
+   - Respond with status `201` and the key, short URL, and hostname
 
 8. Write `RedirectHandler` as a method on `*LinkStore`:
    - Extract the key from the path with `r.PathValue("key")`
    - Look up the key — if not found, return 404
    - Redirect with `http.Redirect` (status 302)
 
-9. In `main`:
-   - Read `REDIS_ADDR` from the environment (default `"localhost:6379"`)
-   - Create a `NewLinkStore` with that address
-   - Set up routes: `"POST /shorten"` and `"GET /r/{key}"`
-   - Start the server on port 8080
+9. Write a `HealthHandler` function (not on `*LinkStore` — it doesn't need Redis):
+   - Use `os.Hostname()` to get the container's hostname
+   - Return JSON: `{"status":"ok","hostname":"<id>"}`
 
-10. Create a `Dockerfile`:
+10. In `main`:
+    - Read `REDIS_ADDR` from the environment (default `"localhost:6379"`)
+    - Create a `NewLinkStore` with that address
+    - Set up routes: `"POST /shorten"`, `"GET /r/{key}"`, and `"GET /health"`
+    - Start the server on port 8080
+
+11. Create a `Dockerfile`:
 
     ```dockerfile
     FROM golang:1.26-alpine
@@ -182,24 +200,57 @@ and Docker DNS lets your app connect to Redis using the hostname `redis`.
     download layer — if you change `main.go` but not your dependencies, Docker
     won't re-download them. This is a common optimization.
 
-11. Create a `docker-compose.yml`:
+12. Create an `nginx.conf` (same pattern as Task 09):
+
+    ```nginx
+    upstream backend {
+        server app:8080;
+    }
+
+    server {
+        listen 80;
+
+        location / {
+            proxy_pass http://backend;
+        }
+    }
+    ```
+
+13. Create a `docker-compose.yml`:
 
     ```yaml
     services:
       redis:
         image: redis:7-alpine
-        ports:
-          - "6379:6379"
+        expose:
+          - "6379"
 
       app:
         build: .
-        ports:
-          - "8080:8080"
+        deploy:
+          replicas: 3
+        expose:
+          - "8080"
         environment:
           - REDIS_ADDR=redis:6379
         depends_on:
           - redis
+
+      nginx:
+        image: nginx:alpine
+        ports:
+          - "8080:80"
+        volumes:
+          - ./nginx.conf:/etc/nginx/conf.d/default.conf
+        depends_on:
+          - app
     ```
+
+    Key differences from the single-container version:
+    - Redis uses `expose` instead of `ports` (internal only, not mapped to host)
+    - The app runs 3 replicas with `expose` instead of `ports`
+    - Nginx is the single entry point, mapping host port 8080 to its port 80
+    - Docker DNS resolves `app` to all replica IPs for Nginx round-robin
 
 ## Run It
 
@@ -233,12 +284,13 @@ An automated test script is provided in the `answers/` directory:
 bash answers/test_shortener.sh
 ```
 
-The script tests five things:
+The script tests six things:
 1. **POST /shorten** — verify 201 and non-empty key
 2. **GET /r/{key}** — verify 302 redirect to the correct URL
 3. **GET /r/nonexistent** — verify 404
 4. **POST /shorten with empty URL** — verify 400
-5. **Persistence** — restart the app container, verify data survives in Redis
+5. **Persistence** — restart the app containers, verify data survives in Redis
+6. **Load balancing** — hit `/health` 10 times, verify multiple hostnames appear
 
 ## If You Get Stuck
 
@@ -251,5 +303,6 @@ A working solution is in the `answers/` directory.
 - Set a hash field: `s.rdb.HSet(s.ctx, "links", key, url).Err()`
 - Get a hash field: `s.rdb.HGet(s.ctx, "links", key).Result()`
 - Read an env var: `os.Getenv("REDIS_ADDR")`
+- Get the container hostname: `os.Hostname()`
 - The imports you'll need: `"context"`, `"encoding/json"`, `"fmt"`, `"net/http"`,
   `"os"`, `"github.com/redis/go-redis/v9"`

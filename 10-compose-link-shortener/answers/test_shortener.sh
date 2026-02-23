@@ -80,7 +80,7 @@ fi
 # --- Test 5: Persistence — data survives app restart ---
 echo "==> Test 5: Persistence — restarting app container..."
 docker compose restart app
-sleep 3
+sleep 5
 
 PERSIST_RESPONSE=$(curl -s -o /dev/null -w "%{http_code} %{redirect_url}" http://localhost:8080/r/$SHORTEN_KEY)
 PERSIST_STATUS=$(echo "$PERSIST_RESPONSE" | awk '{print $1}')
@@ -94,9 +94,26 @@ else
     FAILED=$((FAILED + 1))
 fi
 
+# --- Test 6: Load balancing — multiple hostnames from /health ---
+echo "==> Test 6: Load balancing — hitting /health 10 times..."
+HOSTNAMES=""
+for i in $(seq 1 10); do
+    H=$(curl -s http://localhost:8080/health | python3 -c "import sys,json; print(json.load(sys.stdin)['hostname'])")
+    HOSTNAMES="$HOSTNAMES $H"
+done
+UNIQUE=$(echo "$HOSTNAMES" | tr ' ' '\n' | sort -u | grep -c .)
+
+if [ "$UNIQUE" -gt 1 ]; then
+    echo "PASS: saw $UNIQUE unique hostnames (load balancing works)"
+    PASSED=$((PASSED + 1))
+else
+    echo "FAIL: expected >1 unique hostname, got $UNIQUE (hostnames:$HOSTNAMES)"
+    FAILED=$((FAILED + 1))
+fi
+
 # --- Summary ---
 echo ""
-echo "==> Results: $PASSED passed, $FAILED failed out of 5 tests"
+echo "==> Results: $PASSED passed, $FAILED failed out of 6 tests"
 if [ "$FAILED" -gt 0 ]; then
     exit 1
 fi

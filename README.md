@@ -66,7 +66,7 @@ Work through these in order. Each has its own `README.md` with instructions.
 | 7 | [07-rest-post](./07-rest-post/) | POST requests, request bodies, JSON encoding |
 | 8 | [08-link-shortener](./08-link-shortener/) | Capstone: maps, mutexes, persistence, redirects |
 | 9 | [09-docker-compose](./09-docker-compose/) | Docker Compose, replicas, Nginx load balancing |
-| 10 | [10-compose-link-shortener](./10-compose-link-shortener/) | Capstone: Redis, third-party packages, Docker Compose |
+| 10 | [10-compose-link-shortener](./10-compose-link-shortener/) | Capstone: Redis, replicas, Nginx, Docker Compose |
 
 ## Tips
 

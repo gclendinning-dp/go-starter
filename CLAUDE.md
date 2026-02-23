@@ -23,7 +23,7 @@ exercises, and `go-redis` for the capstone).
 | 7 | `07-rest-post`         | POST, `json.NewDecoder/Encoder`, `http.NewServeMux` patterns | Ready   |
 | 8 | `08-link-shortener`    | Maps, `sync.Mutex`, persistence, redirects, path params | Ready   |
 | 9 | `09-docker-compose`    | Docker Compose, replicas, Nginx, `os.Hostname()` | Ready   |
-| 10 | `10-compose-link-shortener` | Redis, `go-redis`, Docker Compose, `INCR`/`HSET`/`HGET` | Ready   |
+| 10 | `10-compose-link-shortener` | Redis, `go-redis`, Docker Compose, replicas, Nginx, `os.Hostname()` | Ready   |
 
 ## How to Run Tests
 
@@ -56,7 +56,7 @@ Key decisions and context for this project:
 - Task 07 introduces POST, stream-based JSON, and ServeMux method patterns.
 - Task 08 is the capstone — combines maps, mutexes, file persistence, handlers, and redirects.
 - Task 09 introduces Docker Compose with replicas and Nginx load balancing.
-- Task 10 is the final capstone — combines Redis, Docker Compose, HTTP handlers, and redirects.
+- Task 10 is the final capstone — combines Redis, Docker Compose, replicas, Nginx, HTTP handlers, and redirects.
 
 ## Lessons Learned
 
@@ -89,3 +89,7 @@ future regressions.
 - Task 10's persistence test restarts only the app container (not Redis) to verify data survives.
 - Task 10's Dockerfile copies `go.mod`+`go.sum` before code for dependency layer caching.
 - `json.NewEncoder(w).Encode()` adds a trailing `\n` — tests use `json.NewDecoder` which handles this.
+- Task 10 now uses 3 replicas + Nginx load balancing (same pattern as Task 09).
+- Task 10's `GET /health` endpoint returns `{"status":"ok","hostname":"<id>"}` for proving round-robin.
+- Task 10's `ShortenResponse` includes a `hostname` field showing which replica handled the request.
+- Task 10 has 6 shell-script tests (shorten, redirect, not-found, empty URL, persistence, load balancing).

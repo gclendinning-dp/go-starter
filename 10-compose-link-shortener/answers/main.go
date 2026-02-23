@@ -63,6 +63,7 @@ type ShortenRequest struct {
 type ShortenResponse struct {
 	Key      string `json:"key"`
 	ShortURL string `json:"short_url"`
+	Hostname string `json:"hostname"`
 }
 
 // ShortenHandler accepts a URL and returns a shortened key.
@@ -84,11 +85,14 @@ func (s *LinkStore) ShortenHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	hostname, _ := os.Hostname()
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(ShortenResponse{
 		Key:      key,
 		ShortURL: fmt.Sprintf("http://localhost:8080/r/%s", key),
+		Hostname: hostname,
 	})
 }
 
@@ -105,6 +109,16 @@ func (s *LinkStore) RedirectHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, url, http.StatusFound)
 }
 
+// HealthHandler returns the hostname of the container serving the request.
+func HealthHandler(w http.ResponseWriter, r *http.Request) {
+	hostname, _ := os.Hostname()
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{
+		"status":   "ok",
+		"hostname": hostname,
+	})
+}
+
 func main() {
 	redisAddr := os.Getenv("REDIS_ADDR")
 	if redisAddr == "" {
@@ -116,6 +130,7 @@ func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("POST /shorten", store.ShortenHandler)
 	mux.HandleFunc("GET /r/{key}", store.RedirectHandler)
+	mux.HandleFunc("GET /health", HealthHandler)
 
 	fmt.Println("Server running on http://localhost:8080")
 	http.ListenAndServe(":8080", mux)
