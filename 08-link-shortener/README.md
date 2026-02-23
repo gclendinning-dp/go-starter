@@ -1,4 +1,4 @@
-# Task 08 — Capstone: Link Shortener
+# Task 08 — Link Shortener
 
 ## What You'll Learn
 
