@@ -1,0 +1,10 @@
+2024-01-15 10:00:01 INFO: Server started on port 8080
+2024-01-15 10:00:05 INFO: Request received: GET /message
+2024-01-15 10:00:05 INFO: Response sent: 200 OK
+2024-01-15 10:01:12 ERROR: Connection to database failed
+2024-01-15 10:01:13 INFO: Retrying database connection...
+2024-01-15 10:01:14 INFO: Database connection restored
+2024-01-15 10:02:30 ERROR: Request timeout after 30s
+2024-01-15 10:03:00 INFO: Request received: GET /health
+2024-01-15 10:03:00 INFO: Response sent: 200 OK
+2024-01-15 10:05:45 ERROR: Out of memory: cannot allocate 512MB
