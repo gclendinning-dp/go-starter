@@ -91,6 +91,12 @@ return
 "the client sent something the server can't process". Always `return` after
 calling `http.Error` so you don't accidentally write more data to the response.
 
+## Before You Start — Read the Test
+
+Open `main_test.go` in this directory. It shows how `MessageHandler` and
+`GreetHandler` are tested, including the `GreetResponse` struct the test expects,
+and the edge cases for empty names and invalid JSON.
+
 ## Instructions
 
 1. Create a file called `main.go` in this directory (not in `answers/`).
@@ -141,8 +147,6 @@ curl -X POST http://localhost:8080/greet \
 You should see: `{"greeting":"Hello, Alice!"}`
 
 ## Test It
-
-Copy `main_test.go` from the `answers/` directory into this directory, then:
 
 ```bash
 go test -v

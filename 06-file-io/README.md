@@ -97,6 +97,12 @@ defer file.Close() // runs when the function exits
 You already saw `defer` in Task 03 with `defer resp.Body.Close()` — same idea,
 different resource.
 
+## Before You Start — Read the Test
+
+Open `main_test.go` in this directory. It defines the exact signatures for
+`ReadLines`, `FilterLines`, and `WriteLines`, and shows what each function
+should return — including edge cases like nonexistent files.
+
 ## Instructions
 
 1. Create a file called `main.go` in this directory (not in `answers/`).
@@ -138,8 +144,6 @@ cat errors.txt
 ```
 
 ## Test It
-
-Copy `main_test.go` from the `answers/` directory into this directory, then:
 
 ```bash
 go test -v

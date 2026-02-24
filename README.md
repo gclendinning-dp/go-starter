@@ -68,12 +68,43 @@ Work through these in order. Each has its own `README.md` with instructions.
 | 9 | [09-docker-compose](./09-docker-compose/) | Docker Compose, replicas, Nginx load balancing |
 | 10 | [10-compose-link-shortener](./10-compose-link-shortener/) | Capstone: Redis, replicas, Nginx, Docker Compose |
 
+## Test-Driven Development (TDD)
+
+This project uses **test-driven development**. Each exercise (01–04, 06–08) has a
+`main_test.go` already in the exercise directory — before you write any code.
+The tests define exactly what your code needs to do.
+
+The TDD cycle is:
+
+1. **Red** — Read the test. Try running it (`go test -v`). It won't compile yet
+   because the functions don't exist. That's expected.
+2. **Green** — Write the minimum code in `main.go` to make the test pass.
+3. **Refactor** — Clean up your code while keeping the tests green.
+
+This is how professional developers work: the test is the specification. You
+don't guess what to build — the test tells you. If the test passes, you're done.
+
+Exercises 05, 09, and 10 use shell scripts for testing instead (Docker exercises
+don't fit Go's test framework). These scripts run automatically against your
+running containers.
+
+### Running tests
+
+```bash
+# Run the test for a specific exercise (from the exercise directory):
+cd 01-hello-world
+go test -v
+
+# Run all answer tests (to verify the repo setup):
+go test ./01-hello-world/answers/ ./02-local-mock-server/answers/ ...
+```
+
 ## Tips
 
-- **Read the test first.** Exercises 01–08 each have a `main_test.go` that shows
-  exactly what your code needs to do. Exercises 05, 09, and 10 use shell scripts
-  for testing instead (Docker exercises don't fit Go's test framework).
-- **Use `go test -v`** in an exercise directory to see detailed output.
+- **Read the test first.** The `main_test.go` in each exercise directory is your
+  specification. Read it before writing any code — it tells you what functions to
+  create, what they should return, and what edge cases to handle.
+- **Use `go test -v`** for detailed output showing which tests pass and fail.
 - **Test POST endpoints with curl.** For exercises with POST routes, use
   `curl -X POST -H "Content-Type: application/json" -d '{"key":"value"}' URL`.
 - **Ask questions.** The goal is to learn, not to finish fast.

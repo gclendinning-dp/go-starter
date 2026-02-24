@@ -180,6 +180,12 @@ Closing the channel (step 4) is important — it tells the receiving side "no
 more values are coming". Without it, your program would wait forever for more
 results.
 
+## Before You Start — Read the Test
+
+Open `main_test.go` in this directory. It shows you what `FetchAll` needs to do,
+how correctness is checked, and the concurrency timing assertion — 5 tasks at
+200ms each must complete in under 500ms.
+
 ## Instructions
 
 1. Create a file called `main.go` in this directory (not in `answers/`).
@@ -213,8 +219,6 @@ go run .
 ```
 
 ## Test It
-
-Copy `main_test.go` from the `answers/` directory into this directory, then:
 
 ```bash
 go test -v

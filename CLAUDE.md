@@ -28,7 +28,11 @@ exercises, and `go-redis` for the capstone).
 ## How to Run Tests
 
 ```bash
-go test ./...
+# Run answer tests (all pass out of the box):
+go test ./01-hello-world/answers/ ./02-local-mock-server/answers/ ./03-http-client/answers/ ./04-concurrency/answers/ ./06-file-io/answers/ ./07-rest-post/answers/ ./08-link-shortener/answers/
+
+# Run a student's test for a specific exercise:
+cd 01-hello-world && go test -v
 ```
 
 ## Student Progress
@@ -49,7 +53,10 @@ go test ./...
 Key decisions and context for this project:
 
 - Standard library only — no third-party packages (exception: Task 10 uses `go-redis`).
-- Tests are the source of truth; exercises 01–08 each have a `main_test.go`.
+- TDD approach: `main_test.go` lives in the exercise root directory (not just answers/).
+  The student reads the test first, then writes `main.go` to make it pass.
+- Tests are the source of truth; exercises 01–04, 06–08 each have a `main_test.go`
+  in both the exercise root (for the student) and `answers/` (for reference).
   Exercises 05, 09, 10 use shell scripts for testing (Docker exercises).
 - The mock server from Task 02 is reused in Task 03's tests to validate the client.
 - Task 06 teaches file I/O — the fundamental gap before building the capstone.
@@ -63,6 +70,8 @@ Key decisions and context for this project:
 Record any logic errors, unexpected behaviour, or corrections here to prevent
 future regressions.
 
+- Test files (`main_test.go`) live in both the exercise root (for TDD) and `answers/` (for reference).
+  `go test ./...` no longer works from root — use explicit answer paths or run per-exercise.
 - All 4 tests (1 in Task 01, 1 in Task 02, 2 in Task 03) pass on initial setup.
 - Task 03's test uses a local `mockMessageHandler` that replicates Task 02's
   handler, keeping the test self-contained (no cross-package imports needed).

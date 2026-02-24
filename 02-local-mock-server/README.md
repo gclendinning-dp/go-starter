@@ -82,6 +82,12 @@ HTTP headers are pieces of extra information attached to a request or response.
 The `Content-Type` header tells the client what kind of data the response
 contains. Setting it to `application/json` means "this response body is JSON".
 
+## Before You Start — Read the Test
+
+Open `main_test.go` in this directory. It shows you exactly what your
+`MessageHandler` function needs to do — the expected Content-Type header, the
+response body format, and how the test server works.
+
 ## Instructions
 
 1. Create a file called `main.go` in this directory (not in `answers/`).
@@ -113,8 +119,6 @@ You should see: `{"message": "Hello from the backend!"}`
 number on a building. Your server is listening on door 8080.
 
 ## Test It
-
-Copy `main_test.go` from the `answers/` directory into this directory, then:
 
 ```bash
 go test -v

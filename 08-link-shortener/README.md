@@ -142,6 +142,13 @@ err = os.WriteFile("links.json", data, 0644)  // write []byte to file
 These are simpler than `os.Open` + scanner for cases where the whole file fits
 in memory (which is almost always true for config and data files).
 
+## Before You Start — Read the Test
+
+Open `main_test.go` in this directory. It's the most comprehensive test yet — it
+shows how `NewLinkStore`, `Shorten`, `Lookup`, `SaveToFile`, `LoadFromFile`,
+`ShortenHandler`, and `RedirectHandler` all work together. Pay attention to the
+`ShortenResponse` struct and the persistence test.
+
 ## Instructions
 
 1. Create a file called `main.go` in this directory (not in `answers/`).
@@ -213,8 +220,6 @@ curl -L http://localhost:8080/r/0
 ```
 
 ## Test It
-
-Copy `main_test.go` from the `answers/` directory into this directory, then:
 
 ```bash
 go test -v

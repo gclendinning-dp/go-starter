@@ -63,6 +63,13 @@ run" (as opposed to a library that other code uses).
 `import "fmt"` brings in the `fmt` package from Go's standard library, which
 gives you printing and formatting tools like `Println` and `Sprintf`.
 
+## Before You Start — Read the Test
+
+Open `main_test.go` in this directory. It's your specification — it tells you
+exactly what functions to create and what they should return. Read it before
+writing any code. This is called **test-driven development (TDD)**: the test
+comes first, then you write the code to make it pass.
+
 ## Instructions
 
 1. Create a file called `main.go` in this directory (not in `answers/`).
@@ -93,14 +100,13 @@ go run .
 
 ## Test It
 
-Copy `main_test.go` from the `answers/` directory into this directory, then:
-
 ```bash
 go test -v
 ```
 
 The test will check that your `Greet` function returns the correct string for
-several different inputs.
+several different inputs. It won't compile until you've created `main.go` with
+the `Greet` function — that's expected.
 
 ## If You Get Stuck
 
