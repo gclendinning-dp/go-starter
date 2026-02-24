@@ -41,7 +41,7 @@ to standard Go style. No arguments about tabs vs spaces — Go decides for you.
 ## 3. Clone and Run
 
 ```bash
-git clone https://github.com/student-dev/go-starter.git
+git clone https://github.com/gclendinning-dp/go-starter.git
 cd go-starter
 ```
 
