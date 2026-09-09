@@ -64,6 +64,11 @@ Key decisions and context for this project:
 - Task 08 is the capstone — combines maps, mutexes, file persistence, handlers, and redirects.
 - Task 09 introduces Docker Compose with replicas and Nginx load balancing.
 - Task 10 is the final capstone — combines Redis, Docker Compose, replicas, Nginx, HTTP handlers, and redirects.
+- Per-language onboarding guides live in `docs/coming-from-<language>.md` (C#, Python, Java),
+  linked from README section 4. Don't move this content back into the README — it crowds it out.
+- Each guide is deliberately self-contained (the Go half of every comparison repeats) so a
+  reader reads exactly one file. Adding a language means copying the skeleton: no classes,
+  no inheritance, implicit interfaces, errors not exceptions, cheat-sheet table.
 
 ## Lessons Learned
 
